@@ -5,24 +5,15 @@ import { Movies } from "./src/model/Movies.js";
 
 const app = express();
 
-const corsOptions = {
-  origin: "https://movie-watchlist-frontend-sepia.vercel.app/",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true, 
-};
-
-
-app.use(cors(corsOptions));
-
+app.use(cors());
 
 app.use(express.json());
 
-
 (async () => await connectToDb())();
 
-app.get("/",(req,res)=>{
+app.get("/", (req, res) => {
   res.json("Hello");
-})
+});
 
 app.get("/movies-list", async (req, res) => {
   try {
@@ -118,13 +109,13 @@ app.post("/movies-list/:id/add-review", async (req, res) => {
 });
 
 app.post("/movies-list/:id/add-rating", async (req, res) => {
-  const  id  = req.params.id;
-  const rating  = req.body.rating;
+  const id = req.params.id;
+  const rating = req.body.rating;
   console.log("Rating received in backend: ", rating);
   try {
     const updatedMovie = await Movies.findByIdAndUpdate(
       id,
-      {rating} ,
+      { rating },
       { new: true }
     );
 
@@ -158,7 +149,5 @@ app.put("/movies-list/:id/toggle-watched", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-
-
 
 export default app;
