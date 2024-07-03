@@ -4,6 +4,7 @@ import { Movies } from "./src/model/Movies.js";
 
 const app = express();
 
+
 app.use(express.json());
 
 (async () => await connectToDb())();
