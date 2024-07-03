@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
-import { connectToDb } from "./database/config.js";
-import { Movies } from "./model/Movies.js";
+import { connectToDb } from "./src/database/config.js";
+import { Movies } from "./src/model/Movies.js";
 
 const app = express();
 
