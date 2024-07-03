@@ -153,4 +153,4 @@ app.put("/movies-list/:id/toggle-watched", async (req, res) => {
 
 
 
-module.exports = app;
+export default app;
