@@ -151,6 +151,6 @@ app.put("/movies-list/:id/toggle-watched", async (req, res) => {
   }
 });
 
-// app.listen(8080, () => {
-//   console.log("Listening to port - 8080");
-// });
+
+
+module.exports = app;
