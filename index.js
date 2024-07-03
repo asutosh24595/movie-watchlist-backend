@@ -9,6 +9,9 @@ app.use(cors());
 
 app.use(express.json());
 
+const port = process.env.PORT || 8080;
+
+
 (async () => await connectToDb)();
 
 app.get("/", (req, res) => {
@@ -149,5 +152,10 @@ app.put("/movies-list/:id/toggle-watched", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
+
 
 export default app;
