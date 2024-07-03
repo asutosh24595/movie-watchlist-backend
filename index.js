@@ -1,31 +1,46 @@
 import express from "express";
-import cors from "cors";
 import { connectToDb } from "./src/database/config.js";
 import { Movies } from "./src/model/Movies.js";
 
 const app = express();
 
-app.use(cors());
+const allowCors = fn => async (req, res) => {
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', 'https://movie-watchlist-frontend-sepia.vercel.app');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  );
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+  return await fn(req, res);
+};
 
 app.use(express.json());
 
 (async () => await connectToDb())();
 
-app.get("/", (req, res) => {
-  res.json("Hello");
-});
+const handler = (req, res) => {
+  const d = new Date();
+  res.end(d.toString());
+};
 
-app.get("/movies-list", async (req, res) => {
+app.get("/", allowCors(handler));
+
+app.get("/movies-list", allowCors(async (req, res) => {
   try {
     const moviesList = await Movies.find();
     res.status(200).json(moviesList);
   } catch (e) {
     console.error(e);
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: e.message });
   }
-});
+}));
 
-app.get("/movies-list/:id", async (req, res) => {
+app.get("/movies-list/:id", allowCors(async (req, res) => {
   const id = req.params.id;
   try {
     const movie = await Movies.findById(id);
@@ -37,9 +52,9 @@ app.get("/movies-list/:id", async (req, res) => {
     console.error(e);
     res.status(400).json({ message: e.message });
   }
-});
+}));
 
-app.post("/add-movie", async (req, res) => {
+app.post("/add-movie", allowCors(async (req, res) => {
   const movieData = req.body;
   try {
     const newMovie = new Movies(movieData);
@@ -49,9 +64,9 @@ app.post("/add-movie", async (req, res) => {
     console.error(e);
     res.status(400).json({ message: e.message });
   }
-});
+}));
 
-app.put("/edit-movie/:id", async (req, res) => {
+app.put("/edit-movie/:id", allowCors(async (req, res) => {
   const id = req.params.id;
   const updatedMovieData = req.body;
   try {
@@ -68,9 +83,9 @@ app.put("/edit-movie/:id", async (req, res) => {
     console.error(e);
     res.status(500).json({ message: e.message });
   }
-});
+}));
 
-app.delete("/delete-movie/:id", async (req, res) => {
+app.delete("/delete-movie/:id", allowCors(async (req, res) => {
   const id = req.params.id;
   try {
     const deletedMovie = await Movies.findByIdAndDelete(id);
@@ -84,9 +99,9 @@ app.delete("/delete-movie/:id", async (req, res) => {
     console.error(e);
     res.status(500).json({ message: e.message });
   }
-});
+}));
 
-app.post("/movies-list/:id/add-review", async (req, res) => {
+app.post("/movies-list/:id/add-review", allowCors(async (req, res) => {
   const { id } = req.params;
   const { review } = req.body;
 
@@ -106,16 +121,16 @@ app.post("/movies-list/:id/add-review", async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
-});
+}));
 
-app.post("/movies-list/:id/add-rating", async (req, res) => {
-  const id = req.params.id;
-  const rating = req.body.rating;
+app.post("/movies-list/:id/add-rating", allowCors(async (req, res) => {
+  const  id  = req.params.id;
+  const rating  = req.body.rating;
   console.log("Rating received in backend: ", rating);
   try {
     const updatedMovie = await Movies.findByIdAndUpdate(
       id,
-      { rating },
+      {rating} ,
       { new: true }
     );
 
@@ -128,9 +143,9 @@ app.post("/movies-list/:id/add-rating", async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
-});
+}));
 
-app.put("/movies-list/:id/toggle-watched", async (req, res) => {
+app.put("/movies-list/:id/toggle-watched", allowCors(async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -148,6 +163,7 @@ app.put("/movies-list/:id/toggle-watched", async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
-});
+}));
 
+// Export the app for Vercel
 export default app;
