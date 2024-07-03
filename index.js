@@ -4,10 +4,31 @@ import { Movies } from "./src/model/Movies.js";
 
 const app = express();
 
+const allowedOrigins = ['https://movie-watchlist-frontend-sepia.vercel.app'];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['X-CSRF-Token', 'X-Requested-With', 'Accept', 'Accept-Version', 'Content-Length', 'Content-MD5', 'Content-Type', 'Date', 'X-Api-Version'],
+  credentials: true,
+  preflightContinue: true,
+  optionsSuccessStatus: 204
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 
 (async () => await connectToDb())();
+
+app.options('*', cors(corsOptions)); // Enable pre-flight across the board
 
 app.get("/", (req, res) => {
   res.json("Hello");
