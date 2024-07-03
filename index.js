@@ -5,7 +5,15 @@ import { Movies } from "./src/model/Movies.js";
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: "https://movie-watchlist-frontend-sepia.vercel.app/",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true, 
+};
+
+
+app.use(cors(corsOptions));
+
 
 app.use(express.json());
 
