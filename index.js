@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { connectToDb } from "./src/database/config.js";
+import  connectToDb  from "./src/database/config.js";
 import { Movies } from "./src/model/Movies.js";
 
 const app = express();
@@ -9,7 +9,7 @@ app.use(cors());
 
 app.use(express.json());
 
-(async () => await connectToDb())();
+(async () => await connectToDb)();
 
 app.get("/", (req, res) => {
   res.json("Hello");
